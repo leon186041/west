@@ -61,8 +61,8 @@ class Dog extends Creature {
 
 
 class Trasher extends Dog {
-    constructor(name = 'Громила', maxPower = 5, image) {
-        super(name, maxPower, image);
+    constructor(name = 'Громила', maxPower = 5) {
+        super(name, maxPower);
     }
 
     modifyTakenDamage(value, fromCard, gameContext, continuation) {
@@ -73,6 +73,31 @@ class Trasher extends Dog {
 
     getDescriptions() {
         return ['Получает на 1 урон меньше', ...super.getDescriptions()];
+    }
+}
+
+class Gatling extends Creature {
+    constructor(name = 'Гатлинг', maxPower = 6) {
+        super(name, maxPower);
+    }
+
+    attack(gameContext, continuation) {
+        const taskQueue = new TaskQueue();
+
+        const {currentPlayer, oppositePlayer, position, updateView} = gameContext;
+
+        taskQueue.push(onDone => this.view.showAttack(onDone));
+
+        for (let i = 0; i < oppositePlayer.table.length; i++) {
+            const oppositeCard = oppositePlayer.table[i];
+            if (oppositeCard) {
+                taskQueue.push(onDone => {
+                    this.dealDamageToCreature(2, oppositeCard, gameContext, onDone);
+                });
+            }
+        }
+        taskQueue.continueWith(continuation);
+
     }
 }
 
