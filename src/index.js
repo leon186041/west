@@ -28,16 +28,35 @@ function getCreatureDescription(card) {
 }
 
 
+class Creature extends Card {
+    get currentPower() {
+        return this._currentPower;
+    }
 
-// Основа для утки.
-function Duck() {
-    this.quacks = function () { console.log('quack') };
-    this.swims = function () { console.log('float: both;') };
+    set currentPower(value) {
+        this._currentPower = Math.min(value, this.maxPower);
+    }
+
+    getDescriptions() {
+        return [getCreatureDescription(this), ...super.getDescriptions()]
+    }
 }
 
 
-// Основа для собаки.
-function Dog() {
+class Duck extends Creature {
+    constructor(name = 'Мирная утка', maxPower = 2) {
+        super(name, maxPower);
+    }
+
+    quacks() { console.log('quack') }
+    swims() { console.log('float: both;') }
+}
+
+
+class Dog extends Creature {
+    constructor(name = 'Пес-бандит', maxPower = 3) {
+        super(name, maxPower);
+    }
 }
 
 
